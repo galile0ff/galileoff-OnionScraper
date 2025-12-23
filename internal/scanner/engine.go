@@ -37,11 +37,11 @@ func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
 		})
 
 		// Hatayı olduysa terminale ve log dosyasına logla
-		report.Log(fmt.Sprintf("[CRITICAL_ERROR] Tor bağlantısı başlatılamadı. Hata: %v", err))
+		report.Log("CRITICAL", fmt.Sprintf("Tor bağlantısı başlatılamadı. Hata: %v", err))
 		connectionErr = err
 	} else {
 		ui.PrintSuccess(fmt.Sprintf("Tor bağlantısı başarılı! Kullanılan Port: %s", proxyAddr))
-		report.Log(fmt.Sprintf("[INFO] Tor bağlantısı kuruldu. Port: %s", proxyAddr))
+		report.Log("INFO", fmt.Sprintf("Tor bağlantısı kuruldu. Port: %s", proxyAddr))
 		ui.PrintInfo("Gizlilik Modu: Tor Browser İmzası (User-Agent) Aktif")
 	}
 
@@ -77,7 +77,7 @@ func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
 		if result.Error != nil {
 			failCount++
 			// Hatayı log dosyasına yaz
-			report.Log(fmt.Sprintf("[FAILED] %s -> %v", result.URL, result.Error))
+			report.Log("FAILED", fmt.Sprintf("%s -> %v", result.URL, result.Error))
 
 			// Kullanıcı için basit bir mesaj
 			var detailMsg string
@@ -90,7 +90,7 @@ func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
 		} else {
 			successCount++
 			// Başarılı durum
-			report.Log(fmt.Sprintf("[SUCCESS] %s -> OK [%s]", result.URL, result.UsedUA))
+			report.Log("SUCCESS", fmt.Sprintf("%s -> OK [%s]", result.URL, result.UsedUA))
 
 			// Başarılı mesajını göster
 			ui.PrintStatusLine(result.URL, "BAŞARILI", fmt.Sprintf("(%s)", result.UsedUA), true)
@@ -154,19 +154,19 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 
 		// HTML içeriğini kaydet
 		if err := report.SaveHTML(url, string(body), outputDir); err != nil {
-			report.Log(fmt.Sprintf("%s için HTML kaydetme hatası: %v", url, err))
+			report.Log("ERROR", fmt.Sprintf("%s için HTML kaydetme hatası: %v", url, err))
 		}
 
 		// Ekran görüntüsü al (Hata olursa sadece logla, işlemi başarısız sayma)
 		// Screenshot işlemi biraz zaman alacağı için köleler burada meşgul olacak
 		// Ancak concurrency olduğu için diğer URL'ler işlenmeye devam ediyor
 		if screenshotData, err := CaptureScreenshot(url, proxyAddr); err != nil {
-			report.Log(fmt.Sprintf("[FAILED] %s için screenshot alınamadı: %v", url, err))
+			report.Log("FAILED", fmt.Sprintf("%s için screenshot alınamadı: %v", url, err))
 		} else {
 			if err := report.SaveScreenshot(url, screenshotData, outputDir); err != nil {
-				report.Log(fmt.Sprintf("[FAILED] %s için screenshot dosyası kaydedilemedi: %v", url, err))
+				report.Log("ERROR", fmt.Sprintf("%s için screenshot dosyası kaydedilemedi: %v", url, err))
 			} else {
-				report.Log(fmt.Sprintf("[SUCCESS] %s için screenshot kaydedildi.", url))
+				report.Log("SUCCESS", fmt.Sprintf("%s için screenshot kaydedildi.", url))
 			}
 		}
 

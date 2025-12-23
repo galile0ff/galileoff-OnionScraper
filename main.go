@@ -91,7 +91,7 @@ func main() {
 		}
 
 		// Loglayıcıyı Başlat
-		if err := report.InitLogger("scan_report.log", outputDir); err != nil {
+		if err := report.InitLogger("scan_result.log", outputDir); err != nil {
 			ui.PrintError(fmt.Sprintf("Log dosyası oluşturulamadı: %v", err))
 			if !ui.AskForNewScan() {
 				break
@@ -105,12 +105,19 @@ func main() {
 		// İstatistikleri Takip Et
 		startTime := time.Now()
 
+		// Başlangıç Logu
+		report.LogHeader(filepath.Base(targetFile), workerCount)
+
 		// Tarayıcıyı Başlat
 		successCount, failCount := scanner.StartScan(targets, workerCount, outputDir)
 
-		report.Close() // Log dosyasını sonraki turda çakışma olmasın diye kapattık burada
-
 		duration := time.Since(startTime)
+
+		// Bitiş Logu
+		_, totalSizeStr := analyzeOutput(outputDir)
+		report.LogFooter(len(targets), successCount, failCount, duration, totalSizeStr)
+
+		report.Close() // Log dosyasını kapat
 
 		// Sonuç Analizi ve Raporlama
 		files, totalSize := analyzeOutput(outputDir)
