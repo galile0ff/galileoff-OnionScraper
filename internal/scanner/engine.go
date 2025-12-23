@@ -16,14 +16,16 @@ import (
 
 // ScanResult tarama işleminin sonucunu tutar
 type ScanResult struct {
-	URL    string
-	Status string
-	UsedUA string
-	Error  error
+	URL        string
+	StatusCode int
+	Status     string
+	UsedUA     string
+	Error      error
+	LinkCount  int
 }
 
-// StartScan bir çalışan havuzu (worker pool) ile tarama işlemini başlatır ve (başarılı, başarısız) sayılarını döndürür
-func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
+// StartScan bir çalışan havuzu (worker pool) ile tarama işlemini başlatır ve (başarılı, başarısız, toplam_link) sayılarını döndürür
+func StartScan(targets []string, concurrency int, outputDir string) (int, int, int) {
 	client, proxyAddr, err := network.NewTorClient()
 
 	// Tor bağlantı durumu kontrolü
@@ -71,6 +73,7 @@ func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
 
 	successCount := 0
 	failCount := 0
+	totalLinks := 0
 
 	// Sonuçları işle
 	for result := range results {
@@ -89,16 +92,29 @@ func StartScan(targets []string, concurrency int, outputDir string) (int, int) {
 			ui.PrintStatusLine(result.URL, "BAŞARISIZ", detailMsg, false)
 		} else {
 			successCount++
-			// Başarılı durum
-			report.Log("SUCCESS", fmt.Sprintf("%s -> OK [%s]", result.URL, result.UsedUA))
+			totalLinks += result.LinkCount
+
+			// Başarılı durum: HTTP Kodu ile logla
+			statusText := http.StatusText(result.StatusCode)
+			if statusText == "" {
+				statusText = "Unknown"
+			}
+
+			// Log seviyesini belirle (200-300 SUCCESS, diğerleri WARNING)
+			logLevel := "SUCCESS"
+			if result.StatusCode < 200 || result.StatusCode >= 300 {
+				logLevel = "WARNING"
+			}
+
+			report.Log(logLevel, fmt.Sprintf("%s -> %d %s [%s]", result.URL, result.StatusCode, statusText, result.UsedUA))
 
 			// Başarılı mesajını göster
-			ui.PrintStatusLine(result.URL, "BAŞARILI", fmt.Sprintf("(%s)", result.UsedUA), true)
+			ui.PrintStatusLine(result.URL, "BAŞARILI", fmt.Sprintf("(%d %s)", result.StatusCode, statusText), true)
 		}
 	}
 
 	ui.PrintSectionHeader("Tarama Tamamlandı")
-	return successCount, failCount
+	return successCount, failCount, totalLinks
 }
 
 func worker(client *http.Client, proxyAddr string, tasks <-chan string, results chan<- ScanResult, wg *sync.WaitGroup, connectionErr error, outputDir string) {
@@ -145,6 +161,7 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		statusCode := resp.StatusCode // Kodu al
 		resp.Body.Close()
 
 		if err != nil {
@@ -155,6 +172,26 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 		// HTML içeriğini kaydet
 		if err := report.SaveHTML(url, string(body), outputDir); err != nil {
 			report.Log("ERROR", fmt.Sprintf("%s için HTML kaydetme hatası: %v", url, err))
+		}
+
+		// Linkleri ayıkla ve kaydet
+		links := utils.ExtractLinks(string(body))
+		linkCount := len(links)
+
+		if linkCount > 0 {
+			if err := report.SaveLinks(url, links, outputDir); err != nil {
+				report.Log("ERROR", fmt.Sprintf("%s için linkler kaydedilemedi: %v", url, err))
+			} else {
+				report.Log("INFO", fmt.Sprintf("%s adresinde %d adet link bulundu ve links.txt dosyasına eklendi.", url, linkCount))
+				// Bulunan linkleri log dosyasına da ekle
+				for _, l := range links {
+					// Güvenlik: Log dosyasında da defang yapalım
+					safeLink := strings.Replace(l, ".onion", "[.]onion", -1)
+					report.Log("LINK", fmt.Sprintf("  -> %s", safeLink))
+				}
+			}
+		} else {
+			report.Log("INFO", fmt.Sprintf("%s adresinde hiç link bulunamadı.", url))
 		}
 
 		// Ekran görüntüsü al (Hata olursa sadece logla, işlemi başarısız sayma)
@@ -170,6 +207,13 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 			}
 		}
 
-		results <- ScanResult{URL: url, Status: "SUCCESS", UsedUA: profile.Name, Error: nil}
+		results <- ScanResult{
+			URL:        url,
+			StatusCode: statusCode,
+			Status:     "SUCCESS",
+			UsedUA:     profile.Name,
+			Error:      nil,
+			LinkCount:  linkCount,
+		}
 	}
 }

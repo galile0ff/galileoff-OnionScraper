@@ -52,7 +52,7 @@ func LogHeader(targetFile string, workerCount int) {
 }
 
 // LogFooter kapanış özeti yazar
-func LogFooter(total, success, failed int, duration time.Duration, totalSize string) {
+func LogFooter(total, success, failed, totalLinks int, duration time.Duration, totalSize string) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -70,10 +70,11 @@ func LogFooter(total, success, failed int, duration time.Duration, totalSize str
   TOPLAM HEDEF : %d
   BAŞARILI     : %d
   BAŞARISIZ    : %d
+  TOPLAM LİNK  : %d
   TOPLAM SÜRE  : %s
   VERİ BOYUTU  : %s
 %s
-`, divider, border, total, success, failed, duration, totalSize, border)
+`, divider, border, total, success, failed, totalLinks, duration, totalSize, border)
 
 	logFile.WriteString(footer)
 }
@@ -89,7 +90,7 @@ func Log(level, message string) {
 
 	// [ZAMAN] [LEVEL] Mesaj
 	timestamp := time.Now().Format("15:04:05")
-	entry := fmt.Sprintf("[%s] [%-7s] %s\n", timestamp, level, message)
+	entry := fmt.Sprintf("[%s] [%s] %s\n", timestamp, level, message)
 
 	logFile.WriteString(entry)
 }
@@ -135,6 +136,39 @@ func SaveScreenshot(url string, data []byte, outputDir string) error {
 	path := filepath.Join(outputDir, safeName)
 
 	return os.WriteFile(path, data, 0644)
+}
+
+// SaveLinks linkleri dosyaya kaydeder
+func SaveLinks(url string, links []string, outputDir string) error {
+	if len(links) == 0 {
+		return nil
+	}
+
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return err
+	}
+
+	path := filepath.Join(outputDir, "links.txt")
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	// Başlık
+	border := strings.Repeat("=", 80)
+	header := fmt.Sprintf("\n%s\n  KAYNAK ADRES: %s\n%s\n", border, url, border)
+	f.WriteString(header)
+
+	// Linkleri güvenli şekilde yaz (defang)
+	for _, link := range links {
+		// .onion -> [.]onion
+		defanged := strings.Replace(link, ".onion", "[.]onion", -1)
+		f.WriteString(fmt.Sprintf("  [+] %s\n", defanged))
+	}
+	f.WriteString("\n")
+
+	return nil
 }
 
 // sanitizeFilename URL'den güvenli dosya adı oluşturur

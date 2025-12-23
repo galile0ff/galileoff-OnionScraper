@@ -109,13 +109,13 @@ func main() {
 		report.LogHeader(filepath.Base(targetFile), workerCount)
 
 		// Tarayıcıyı Başlat
-		successCount, failCount := scanner.StartScan(targets, workerCount, outputDir)
+		successCount, failCount, totalLinks := scanner.StartScan(targets, workerCount, outputDir)
 
 		duration := time.Since(startTime)
 
 		// Bitiş Logu
 		_, totalSizeStr := analyzeOutput(outputDir)
-		report.LogFooter(len(targets), successCount, failCount, duration, totalSizeStr)
+		report.LogFooter(len(targets), successCount, failCount, totalLinks, duration, totalSizeStr)
 
 		report.Close() // Log dosyasını kapat
 

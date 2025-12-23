@@ -311,7 +311,7 @@ func GetWorkerCount() int {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf(" %sSeçiminiz >%s ", ColorCyan, ColorReset)
+		fmt.Printf(" %sNörüyoz >%s ", ColorCyan, ColorReset)
 		scanner.Scan()
 		input := strings.TrimSpace(scanner.Text())
 
