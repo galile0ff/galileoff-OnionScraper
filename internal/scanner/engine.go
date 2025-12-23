@@ -138,12 +138,18 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 			targetURL = "http://" + url
 		}
 
+		// Başlangıç Logu
+		report.Log("INFO", fmt.Sprintf("Tarama Başlatılıyor: %s (Köle Çalışmaya Başladı)", url))
+		statStartTime := time.Now()
+
 		// Request oluştur (User-Agent eklemek için)
 		req, err := http.NewRequest("GET", targetURL, nil)
 
 		// Rastgele User-Agent ve ilgili header'ları ayarla
 		profile := utils.GetRandomProfile()
 		if err != nil {
+			// Request oluşturma hatası
+			report.Log("ERROR", fmt.Sprintf("Request oluşturulamadı [%s]: %v", url, err))
 			results <- ScanResult{URL: url, Status: "FAILED", UsedUA: profile.Name, Error: err}
 			continue
 		}
@@ -154,17 +160,33 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 			req.Header.Set(k, v)
 		}
 
+		// İsteği gönder
 		resp, err := client.Do(req)
+
+		scanDuration := time.Since(statStartTime)
+
 		if err != nil {
+			// Bağlantı veya zaman aşımı hatası detaylı logla
+			report.Log("FAILED", fmt.Sprintf("Erişim sağlanamadı [%s] (Süre: %s): %v", url, scanDuration, err))
 			results <- ScanResult{URL: url, Status: "FAILED", UsedUA: profile.Name, Error: err}
 			continue
 		}
 
+		statusCode := resp.StatusCode
+		respSize := resp.ContentLength
+
+		// Response Header'larını önemli olanları logla
+		contentType := resp.Header.Get("Content-Type")
+		server := resp.Header.Get("Server")
+
+		report.Log("DEBUG", fmt.Sprintf("Response Alındı [%s] - Status: %d, Size: %d, Type: %s, Server: %s, Süre: %s",
+			url, statusCode, respSize, contentType, server, scanDuration))
+
 		body, err := io.ReadAll(resp.Body)
-		statusCode := resp.StatusCode // Kodu al
 		resp.Body.Close()
 
 		if err != nil {
+			report.Log("ERROR", fmt.Sprintf("Response Body okunamadı [%s]: %v", url, err))
 			results <- ScanResult{URL: url, Status: "FAILED", UsedUA: profile.Name, Error: err}
 			continue
 		}
@@ -172,6 +194,8 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 		// HTML içeriğini kaydet
 		if err := report.SaveHTML(url, string(body), outputDir); err != nil {
 			report.Log("ERROR", fmt.Sprintf("%s için HTML kaydetme hatası: %v", url, err))
+		} else {
+			report.Log("INFO", fmt.Sprintf("HTML Kaydedildi: %s", url))
 		}
 
 		// Linkleri ayıkla ve kaydet
@@ -198,13 +222,15 @@ func worker(client *http.Client, proxyAddr string, tasks <-chan string, results 
 		// Ekran görüntüsü al (Hata olursa sadece logla, işlemi başarısız sayma)
 		// Screenshot işlemi biraz zaman alacağı için köleler burada meşgul olacak
 		// Ancak concurrency olduğu için diğer URL'ler işlenmeye devam ediyor
+		ssStartTime := time.Now()
 		if screenshotData, err := CaptureScreenshot(url, proxyAddr); err != nil {
 			report.Log("FAILED", fmt.Sprintf("%s için screenshot alınamadı: %v", url, err))
 		} else {
 			if err := report.SaveScreenshot(url, screenshotData, outputDir); err != nil {
 				report.Log("ERROR", fmt.Sprintf("%s için screenshot dosyası kaydedilemedi: %v", url, err))
 			} else {
-				report.Log("SUCCESS", fmt.Sprintf("%s için screenshot kaydedildi.", url))
+				ssDuration := time.Since(ssStartTime)
+				report.Log("SUCCESS", fmt.Sprintf("%s için screenshot başarıyla kaydedildi. (Screenshot Süresi: %s)", url, ssDuration))
 			}
 		}
 

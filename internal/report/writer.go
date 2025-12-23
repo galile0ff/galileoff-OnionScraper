@@ -153,7 +153,7 @@ func SaveLinks(url string, links []string, outputDir string) error {
 
 	// Başlık
 	border := strings.Repeat("=", 80)
-	header := fmt.Sprintf("\n%s\n  KAYNAK ADRES: %s\n%s\n", border, url, border)
+	header := fmt.Sprintf("\n%s\n  KAYNAK ADRES: %s\n  BULUNAN LİNK SAYISI: %d\n%s\n", border, url, len(links), border)
 	f.WriteString(header)
 
 	if len(links) == 0 {
