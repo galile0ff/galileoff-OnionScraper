@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"io/fs"
 	"os"
@@ -35,12 +34,6 @@ func main() {
 		} else {
 			ui.PrintSuccess(fmt.Sprintf("Mevcut Tor IP Adresiniz: %s", ip))
 		}
-	}
-
-	// Komut Satırı Bayrakları (Concurrency için)
-	concurrency := flag.Int("concurrency", 5, "Number of concurrent workers")
-	if !flag.Parsed() {
-		flag.Parse()
 	}
 
 	for {
@@ -88,11 +81,14 @@ func main() {
 			continue
 		}
 
+		// Worker(köle) Sayısını Seç
+		workerCount := ui.GetWorkerCount()
+
 		// İstatistikleri Takip Et
 		startTime := time.Now()
 
 		// Tarayıcıyı Başlat
-		successCount, failCount := scanner.StartScan(targets, *concurrency, outputDir)
+		successCount, failCount := scanner.StartScan(targets, workerCount, outputDir)
 
 		report.Close() // Log dosyasını sonraki turda çakışma olmasın diye kapattık burada
 

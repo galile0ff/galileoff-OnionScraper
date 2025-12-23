@@ -297,3 +297,33 @@ func wrapText(text string, limit int) []string {
 
 	return lines
 }
+
+// GetWorkerCount kullanıcıdan worker(köle) sayısını seçmesini ister
+func GetWorkerCount() int {
+	fmt.Println()
+	fmt.Printf(" %s%s WORKER/KÖLE (EŞZAMANLI İŞLEM) SAYISI:%s\n", ColorCyan, IconArrow, ColorReset)
+	fmt.Println(strings.Repeat("-", 40))
+	fmt.Printf("   %s[1]%s 3 Worker/Köle  (Düşük - Daha yavaş, daha stabil)\n", ColorGreen, ColorReset)
+	fmt.Printf("   %s[2]%s 5 Worker/Köle  (Orta - Dengeli)\n", ColorGreen, ColorReset)
+	fmt.Printf("   %s[3]%s 10 Worker/Köle (Yüksek - Daha hızlı, daha fazla kaynak)\n", ColorGreen, ColorReset)
+	fmt.Println(strings.Repeat("-", 40))
+	fmt.Println()
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Printf(" %sSeçiminiz >%s ", ColorCyan, ColorReset)
+		scanner.Scan()
+		input := strings.TrimSpace(scanner.Text())
+
+		switch input {
+		case "1":
+			return 3
+		case "2":
+			return 5
+		case "3":
+			return 10
+		default:
+			PrintError("Geçersiz seçim! Lütfen 1, 2 veya 3 girin.")
+		}
+	}
+}
