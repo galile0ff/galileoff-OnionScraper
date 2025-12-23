@@ -49,6 +49,13 @@ func LoadTargets(filePath string) ([]string, error) {
 			continue
 		}
 
+		// Güvenli hale getirilmiş (defanged) linkleri düzelt
+		// [.]onion -> .onion, (.)onion -> .onion
+		line = strings.ReplaceAll(line, "[.]", ".")
+		line = strings.ReplaceAll(line, "(.)", ".")
+		line = strings.ReplaceAll(line, "[:]", ":")
+		line = strings.ReplaceAll(line, "(:)", ":")
+
 		// Yapışık onion adreslerini ayır
 		line = reOnionSplit.ReplaceAllString(line, "$1 $2")
 
