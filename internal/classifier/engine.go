@@ -6,32 +6,22 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Analyze verilen HTML içeriğini ve URLi analiz ederek en uygun kategoriyi belirler.
+// Analyze HTML + URL analiz eder
 func Analyze(htmlContent string, url string, linkCount int) Result {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
-		// HTML bozuksa bile en azından URL analizi yap
 		return simpleAnalyze()
 	}
+
+	title := doc.Find("title").Text()
+	metaDesc, _ := doc.Find("meta[name='description']").Attr("content")
 
 	bestScore := 0
 	var bestCategory *Category
 
-	// Tüm kategorileri gez ve puanla
 	for i := range GlobalConfig.Categories {
 		cat := &GlobalConfig.Categories[i]
-		score := calculateScore(cat, doc, htmlContent, linkCount)
-
-		// Eğer öncelikli bir yapısal eşleşme varsa (Priority >= 100) ve skor > 0 ise direkt etiketlenir
-		if cat.Priority >= 100 && score > 0 {
-			return Result{
-				CategoryID: cat.ID,
-				Tag:        cat.Tag,
-				Color:      cat.Color,
-				Score:      score,
-				IsUnknown:  false,
-			}
-		}
+		score := calculateScore(cat, doc, htmlContent, title, metaDesc, linkCount)
 
 		if score > bestScore {
 			bestScore = score
@@ -39,8 +29,22 @@ func Analyze(htmlContent string, url string, linkCount int) Result {
 		}
 	}
 
-	// Hiçbir kategori eşiği geçemediyse (Eşik = 10 puan - En az 1 güçlü eşleşme lazım)
-	if bestScore < 10 || bestCategory == nil {
+	// Login override: başka ciddi kategori varsa login ezilmesin
+	if bestCategory != nil && bestCategory.ID == "login" {
+		for i := range GlobalConfig.Categories {
+			cat := &GlobalConfig.Categories[i]
+			if cat.ID == "login" {
+				continue
+			}
+			altScore := calculateScore(cat, doc, htmlContent, title, metaDesc, linkCount)
+			if altScore >= bestScore-10 {
+				bestScore = altScore
+				bestCategory = cat
+			}
+		}
+	}
+
+	if bestScore < 20 || bestCategory == nil {
 		return Result{
 			CategoryID: "unknown",
 			Tag:        "[BİLİNMEYEN]",
@@ -59,7 +63,7 @@ func Analyze(htmlContent string, url string, linkCount int) Result {
 	}
 }
 
-// AnalyzeLinkContext henüz gidilmemiş bir linki (URL ve text) analiz eder
+// AnalyzeLinkContext henüz girilmemiş linkleri analiz eder
 func AnalyzeLinkContext(url, anchorText string) Result {
 	bestScore := 0
 	var bestCategory *Category
@@ -71,15 +75,25 @@ func AnalyzeLinkContext(url, anchorText string) Result {
 		cat := &GlobalConfig.Categories[i]
 		score := 0
 
-		// URL de geçiyor mu (örn: forum)
 		if strings.Contains(urlLower, cat.ID) {
 			score += 5
 		}
 
-		// Anchor Text analizi
 		for _, kw := range cat.Keywords.High {
 			if strings.Contains(textLower, strings.ToLower(kw)) {
 				score += 5
+			}
+		}
+
+		for _, kw := range cat.Keywords.Medium {
+			if strings.Contains(textLower, strings.ToLower(kw)) {
+				score += 2
+			}
+		}
+
+		for _, kw := range cat.Keywords.Exclude {
+			if strings.Contains(textLower, strings.ToLower(kw)) {
+				score -= 10
 			}
 		}
 
@@ -92,14 +106,13 @@ func AnalyzeLinkContext(url, anchorText string) Result {
 	if bestScore >= 5 && bestCategory != nil {
 		return Result{
 			CategoryID: bestCategory.ID,
-			Tag:        bestCategory.Tag, // örn: [MARKET]
+			Tag:        bestCategory.Tag,
 			Color:      bestCategory.Color,
 			Score:      bestScore,
 			IsUnknown:  false,
 		}
 	}
 
-	// Bilinmeyen durum
 	return Result{
 		CategoryID: "unknown",
 		Tag:        "[?]",
@@ -109,38 +122,52 @@ func AnalyzeLinkContext(url, anchorText string) Result {
 	}
 }
 
-func calculateScore(cat *Category, doc *goquery.Document, rawHTML string, linkCount int) int {
+// calculateScore kategori skorunu hesaplar
+func calculateScore(cat *Category, doc *goquery.Document, rawHTML, title, metaDesc string, linkCount int) int {
 	score := 0
 	lowerHTML := strings.ToLower(rawHTML)
+	lowerTitle := strings.ToLower(title)
+	lowerMeta := strings.ToLower(metaDesc)
 
-	// Max link kontrolü (login sayfaları için)
-	// Eğer kategori max_links sınırı koymuşsa ve link sayısı bunu aşıyorsa, bu kategori olamaz (ceza puanı: -15)
+	// Max link kontrolü (ceza)
 	if cat.MaxLinks > 0 && linkCount > cat.MaxLinks {
-		return -15
+		score -= 15
 	}
 
-	// Yapısal Analiz (Selector)
+	// Yapısal analiz
 	for _, rule := range cat.StructureRules {
 		if doc.Find(rule.Selector).Length() > 0 {
-			score += 50 // Yapısal eşleşme yüksek puan
+			score += 20
 		}
 	}
 
-	// Kelime Analizi (Yüksek)
+	// High keyword
+	highHit := 0
 	for _, kw := range cat.Keywords.High {
-		if strings.Contains(lowerHTML, strings.ToLower(kw)) {
+		k := strings.ToLower(kw)
+		if strings.Contains(lowerHTML, k) {
+			highHit++
+			if highHit <= 5 {
+				score += 10
+			}
+		}
+		if strings.Contains(lowerTitle, k) || strings.Contains(lowerMeta, k) {
 			score += 10
 		}
 	}
 
-	// 4. Kelime Analizi (Orta)
+	// Medium keyword
+	medHit := 0
 	for _, kw := range cat.Keywords.Medium {
 		if strings.Contains(lowerHTML, strings.ToLower(kw)) {
-			score += 5
+			medHit++
+			if medHit <= 7 {
+				score += 5
+			}
 		}
 	}
 
-	// 5. Negatif Kelimeler (Hariç Tut)
+	// Exclude kelimeler
 	for _, kw := range cat.Keywords.Exclude {
 		if strings.Contains(lowerHTML, strings.ToLower(kw)) {
 			score -= 50
@@ -150,7 +177,7 @@ func calculateScore(cat *Category, doc *goquery.Document, rawHTML string, linkCo
 	return score
 }
 
-// simpleAnalyze goquery çökerse fallback olarak çalışır
+// fallback
 func simpleAnalyze() Result {
 	return Result{
 		CategoryID: "unknown",

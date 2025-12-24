@@ -1,21 +1,42 @@
-# rules.yaml - galileoff. Sınıflandırma ve Tehdit Analiz Kuralları
-# Bu dosya etiketleme mantığının beynidir. Kategorileri, anahtar kelimeleri ve yapısal kuralları buradan yönetebilirsiniz.
+# galileoff. OnionScraper / etiketleme için rules.yaml
+# .onion siteleri için ingilizce etiketleme kuralları
 
 categories:
   # ------------------------------------------------------------------
-  # 1. Yüksek Öncelikli Yapısal Kategoriler (Teknik Tespit)
+  # 1. YAPISAL TESPİT (Yüksek Öncelik / Teknik)
   # ------------------------------------------------------------------
   - id: "login"
-    name: "Giriş Paneli"
+    name: "Giriş Paneli / Kimlik Doğrulama"
     tag: "[GİRİŞ PANELİ]"
     color: "red"
     priority: 100
     structure_rules:
       - selector: "input[type='password']"
+      - selector: "input[name*='pass']"
+      - selector: "input[name*='user']"
       - selector: "form[action*='login']"
+      - selector: "form[action*='signin']"
+      - selector: "form[action*='auth']"
+      - selector: "#login"
+      - selector: "#login-form"
+      - selector: ".login-box"
+      - selector: ".auth-box"
     keywords:
-      high: ["Üye Girişi", "Member Login", "Sign In", "Forgot Password", "Kullanıcı Adı", "Şifrenizi mi unuttunuz", "Hesap Oluştur"]
-    max_links: 50 # Login sayfaları genelde sadedir ama footer linkleri olabilir
+      high:
+        - "Authorization Required"
+        - "Restricted Area"
+        - "Members Only"
+        - "Login Required"
+        - "Invalid credentials"
+        - "Tor Browser required"
+      medium:
+        - "Captcha"
+        - "PGP Login"
+        - "2FA"
+        - "OTP"
+        - "Remember Session"
+        - "Session expired"
+    max_links: 60
 
   - id: "forum"
     name: "Forum / Topluluk"
@@ -23,79 +44,273 @@ categories:
     color: "blue"
     priority: 80
     keywords:
-      high: ["Powered by vBulletin", "Powered by phpBB", "Powered by XenForo", "Powered by SMF", "Powered by MyBB", "Powered by Flarum"]
-      medium: ["Forum Statistics", "Last Post", "Active Threads", "Board Index", "Giriş Yap veya Kayıt Ol", "Hoşgeldin Ziyaretçi"]
+      high:
+        - "Powered by XenForo"
+        - "Powered by phpBB"
+        - "Powered by MyBB"
+        - "Discourse"
+        - "Underground Forum"
+        - "Private Board"
+      medium:
+        - "Last Post"
+        - "Threads"
+        - "Replies"
+        - "Reputation"
+        - "Trusted Member"
+        - "Newbie"
     structure_rules:
-      - selector: "div.forum-category"
+      - selector: ".thread"
+      - selector: ".post"
+      - selector: ".postbody"
+      - selector: ".forum-category"
+      - selector: ".reputation"
 
   # ------------------------------------------------------------------
-  # 2. İçerik Bazlı Kategoriler (Kelime Analizi)
+  # 2. MARKET VE TİCARET
   # ------------------------------------------------------------------
-  - id: "market"
-    name: "Karaborsa / Market"
+  - id: "market_general"
+    name: "Genel Market"
     tag: "[MARKET]"
     color: "green"
-    priority: 50
+    priority: 60
     keywords:
-      high: ["Add to Cart", "Escrow Service", "Buy with Bitcoin", "Checkout Now", "Shopping Cart", "Sepete Ekle", "Güvenli Ödeme", "Sipariş Ver"]
-      medium: ["Shipping Options", "Vendor Rating", "Product Description", "XMR Accepted", "BTC Accepted", "Global Shipping", "Ürün Açıklaması"]
-      exclude: ["Forum Rules", "Security Blog", "Research Paper", "Tech News", "Political Analysis", "Günlük Haberler", "Login"] # Yanlış pozitifleri önle
+      high:
+        - "Add to Cart"
+        - "Buy Now"
+        - "Checkout"
+        - "Escrow"
+        - "Vendor"
+        - "Finalize Early"
+        - "Order ID"
+      medium:
+        - "Shipping"
+        - "Stealth"
+        - "Vendor Rating"
+        - "Dispute"
+        - "Auto Finalize"
 
-  - id: "ransomware"
-    name: "Fidye Yazılım Grubu"
-    tag: "[FİDYE YAZILIM]"
-    color: "red"
-    priority: 90
+  - id: "drugs"
+    name: "Uyuşturucu / Narkotik"
+    tag: "[UYUŞTURUCU]"
+    color: "green"
+    priority: 70
     keywords:
-      high: ["files represent", "your files are encrypted", "lockbit supp", "download file list", "leaked data", "verileriniz şifrelendi", "fidye ödeme"]
-      medium: ["decryption id", "download tor browser", "payment deadline", "time remaining", "private key purchase"]
-
-  - id: "mixer"
-    name: "Kripto Karıştırıcı (Mixer)"
-    tag: "[KRİPTO MİKSER]"
-    color: "yellow"
-    keywords:
-      high: ["Mix My Coins", "Clean Your Coins", "Bitcoin Mixer", "Tumbling Service", "Anonymous Transaction", "No Logs Policy"]
-      medium: ["Service Fee", "Delay Time", "Mixer Code", "Letter of Guarantee"]
+      high:
+        - "Cannabis"
+        - "Cocaine"
+        - "Heroin"
+        - "MDMA"
+        - "LSD"
+        - "Methamphetamine"
+        - "Ketamine"
+        - "Research Chemicals"
+        - "Afghani"
+        - "Kush"
+      medium:
+        - "Stealth Shipping"
+        - "Vacuum Sealed"
+        - "Worldwide"
+        - "Domestic Only"
+        - "Drop Address"
 
   - id: "fraud"
-    name: "Dolandırıcılık / Sahtecilik"
+    name: "Dolandırıcılık / Kart / Sahtecilik"
     tag: "[DOLANDIRICILIK]"
     color: "magenta"
+    priority: 75
     keywords:
-      high: ["Cloned Credit Cards", "Fake Passports", "Dump Shop", "CVV Fullz", "Paypal Account Logs", "Hacked Accounts", "Bank Drop Service"]
-      medium: ["Western Union Transfer", "Gift Cards 50% off", "Physical Card Shipping"]
-    exclude: ["Security Research", "Fraud Prevention", "News Article"]
+      high:
+        - "CVV"
+        - "Fullz"
+        - "Dumps"
+        - "Cloned Card"
+        - "Bank Logs"
+        - "SSN"
+        - "DOB"
+        - "Fake Documents"
+      medium:
+        - "Bin List"
+        - "Fresh"
+        - "Checker"
+        - "Cashout Guide"
+        - "Verified Balance"
 
-  - id: "whistleblower"
-    name: "Sızıntı / İhbar (SecureDrop)"
-    tag: "[İHBAR/SIZINTI]"
+  - id: "digital_goods"
+    name: "Dijital Ürünler / Hesaplar"
+    tag: "[DİJİTAL ÜRÜN]"
     color: "cyan"
+    priority: 65
     keywords:
-      high: ["SecureDrop", "Submit Documents", "Anonymous Tip", "Journalist Contact", "Whistleblowing Platform", "Güvenli İhbar", "Belge Yükle"]
+      high:
+        - "Cracked Account"
+        - "Verified Account"
+        - "Lifetime Access"
+        - "Gift Card"
+        - "License Key"
+        - "Premium Access"
+      medium:
+        - "Instant Delivery"
+        - "Auto Delivery"
+        - "Replacement"
+        - "Warranty"
 
-  - id: "hosting"
-    name: "Onion Hosting / Servis Sağlayıcı"
-    tag: "[HOSTING]"
-    color: "white"
-    keywords:
-      high: ["Free Onion Hosting", "Hidden Service Hosting", "Anonymous VPS", "Offshore Hosting", "Tor Hidden Service Provider", "Domain Registration"]
-      medium: ["cPanel Access", "Bitcoin Payment", "No KY"]
-
-  - id: "apt"
-    name: "APT / Devlet Destekli Grup"
-    tag: "[APT GRUBU]"
-    color: "yellow"
-    priority: 95
-    keywords:
-      high: ["Top Secret Document", "Ministry of Defense", "Internal Memo", "Classified Report", "Gizli Belge", "Bakanlık Yazışması"]
-
-  - id: "malware"
-    name: "Zararlı Yazılım / Botnet C2"
-    tag: "[ZARARLI YAZILIM]"
+  - id: "weapons"
+    name: "Silah / Mühimmat"
+    tag: "[SİLAH]"
     color: "red"
     priority: 85
     keywords:
-      high: ["Index of /payloads", "Botnet Panel", "C2 Command", "RAT Builder", "FUD Crypter", "Malware Download"]
+      high:
+        - "Firearm"
+        - "Handgun"
+        - "Rifle"
+        - "Ammunition"
+        - "Suppressor"
+        - "Unserialized"
+        - "Ghost Gun"
+      medium:
+        - "Gun Parts"
+        - "Magazine"
+        - "Caliber"
+        - "Untraceable"
 
-# Varsayılan (bulunamayan) siteler için program otomatik olarak [BİLİNMEYEN] etiketi verecektir.
+  # ------------------------------------------------------------------
+  # 3. HİZMETLER VE FİNANS
+  # ------------------------------------------------------------------
+  - id: "mixer"
+    name: "Kripto Karıştırıcı (Mixer)"
+    tag: "[MİKSER]"
+    color: "yellow"
+    keywords:
+      high:
+        - "Bitcoin Mixer"
+        - "Monero Mixer"
+        - "No Logs"
+        - "Anonymous Mixing"
+        - "Clean Coins"
+      medium:
+        - "Service Fee"
+        - "Delay"
+        - "Guarantee Letter"
+        - "Confirmations"
+
+  - id: "wallet"
+    name: "Kripto Cüzdan"
+    tag: "[CÜZDAN]"
+    color: "cyan"
+    keywords:
+      high:
+        - "Create Wallet"
+        - "Seed Phrase"
+        - "Private Key"
+        - "BIP39"
+        - "Cold Wallet"
+      medium:
+        - "Send"
+        - "Receive"
+        - "Balance"
+        - "Transaction Fee"
+
+  - id: "hosting"
+    name: "Hosting / Teknik Servisler"
+    tag: "[HOSTING]"
+    color: "white"
+    keywords:
+      high:
+        - "Bulletproof Hosting"
+        - "Onion Hosting"
+        - "Offshore VPS"
+        - "No KYC"
+        - "Hidden Service"
+      medium:
+        - "Root Access"
+        - "DDoS Protection"
+        - "Uptime"
+        - "Crypto Payment"
+
+  - id: "hacking"
+    name: "Hacking / Exploit Araçları"
+    tag: "[HACKING]"
+    color: "red"
+    priority: 70
+    keywords:
+      high:
+        - "Exploit"
+        - "0day"
+        - "RAT"
+        - "Botnet"
+        - "C2 Panel"
+        - "Malware Builder"
+      medium:
+        - "Crypter"
+        - "FUD"
+        - "Bypass"
+        - "Source Code"
+
+  # ------------------------------------------------------------------
+  # 4. BİLGİ VE DİĞER
+  # ------------------------------------------------------------------
+  - id: "search"
+    name: "Arama Motoru / Dizin"
+    tag: "[ARAMA/WIKI]"
+    color: "blue"
+    keywords:
+      high:
+        - "Hidden Wiki"
+        - "Onion Links"
+        - "Tor Directory"
+        - "Darknet Index"
+      medium:
+        - "Verified"
+        - "Scam Warning"
+        - "Crawler"
+
+  - id: "leaks"
+    name: "Veri Sızıntısı / Dumps"
+    tag: "[SIZINTI]"
+    color: "red"
+    priority: 80
+    keywords:
+      high:
+        - "Database Dump"
+        - "Password Dump"
+        - "Combo List"
+        - "Internal Data"
+        - "Confidential Files"
+      medium:
+        - "Records"
+        - "Rows"
+        - "Download Dump"
+
+  - id: "ransomware"
+    name: "Fidye Yazılım Grubu Blogu"
+    tag: "[FİDYE YAZILIM]"
+    color: "red"
+    priority: 95
+    keywords:
+      high:
+        - "Victim List"
+        - "Files Encrypted"
+        - "Data Leak"
+        - "Negotiation"
+        - "Payment Deadline"
+      medium:
+        - "Decrypt Tool"
+        - "Countdown"
+        - "Contact Us"
+
+  - id: "news"
+    name: "Haber / Blog / Kişisel"
+    tag: "[HABER/BLOG]"
+    color: "white"
+    keywords:
+      high:
+        - "Darknet News"
+        - "Security Research"
+        - "Leak Analysis"
+      medium:
+        - "Article"
+        - "Author"
+        - "Published"
+
+# Varsayılan (eşleşmeyen) durum [BİLİNMEYEN] olarak etiketlenir.
