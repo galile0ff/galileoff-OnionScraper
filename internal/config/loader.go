@@ -7,17 +7,24 @@ import (
 	"strings"
 )
 
-// ListYamlFiles mevcut dizindeki taranması istenilebilecek .yaml dosyalarını listeler
+// ListYamlFiles config dizinindeki taranabilecek .yaml dosyalarını listeler
 func ListYamlFiles() ([]string, error) {
 	var files []string
-	entries, err := os.ReadDir(".")
+	configDir := "config"
+
+	entries, err := os.ReadDir(configDir)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, entry := range entries {
-		if !entry.IsDir() && (strings.HasSuffix(entry.Name(), ".yaml") || strings.HasSuffix(entry.Name(), ".yml")) {
-			files = append(files, entry.Name())
+		// .yaml/.yml uzantılı olmalı ve rules.yaml'ı dahil etmedim
+		if !entry.IsDir() &&
+			(strings.HasSuffix(entry.Name(), ".yaml") || strings.HasSuffix(entry.Name(), ".yml")) &&
+			entry.Name() != "rules.yaml" {
+
+			// Tam yolunu ekle: config/targets.yaml gibi
+			files = append(files, configDir+"/"+entry.Name()) // Basit path birleştirme
 		}
 	}
 	return files, nil

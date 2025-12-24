@@ -170,7 +170,8 @@ func selectTargetFile() string {
 }
 
 func selectUserAgentFile() string {
-	files, err := filepath.Glob("*.json")
+	// config klasöründeki .json dosyalarını ara
+	files, err := filepath.Glob("config/*.json")
 	if err != nil || len(files) == 0 {
 		return ""
 	}

@@ -29,7 +29,7 @@ type ScanResult struct {
 // StartScan bir çalışan havuzu (worker pool) ile tarama işlemini başlatır ve (başarılı, başarısız, toplam_link) sayılarını döndürür
 func StartScan(targets []string, concurrency int, outputDir string) (int, int, int) {
 	// Sınıflandırma Kurallarını Yükle
-	if err := classifier.LoadRules("rules.yaml"); err != nil {
+	if err := classifier.LoadRules("config/rules.yaml"); err != nil {
 		ui.PrintWarningBox([]string{
 			"SINIFLANDIRMA KURALLARI YÜKLENEMEDİ",
 			"rules.yaml dosyası okunamadı veya hatalı.",
