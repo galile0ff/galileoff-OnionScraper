@@ -29,17 +29,6 @@ var arts = []Art{
 	{"banner13", ColorBlue, banner13},
 	{"banner14", ColorWhite, banner14},
 	{"banner15", ColorRed, banner15},
-	{"banner16", ColorYellow, banner16},
-	{"banner17", ColorRed, banner17},
-	{"banner18", ColorWhite, banner18},
-	{"banner19", ColorCyan, banner19},
-	{"banner20", ColorGreen, banner20},
-	{"banner21", ColorRed, banner21},
-	{"banner22", ColorWhite, banner22},
-	{"banner23", ColorBlue, banner23},
-	{"banner24", ColorWhite, banner24},
-	{"banner25", ColorRed, banner25},
-	{"banner26", ColorYellow, banner26},
 }
 
 func RandomArt() Art {
@@ -61,285 +50,171 @@ func GetArt(name string) (Art, error) {
 	return RandomArt(), errors.New("ascii bulunamadı")
 }
 
-// Geçenki projede kullandığım ascii'leri ekledim şuanlık, TOR için özelleştircem sonra
 const banner1 = `
-      (   )   (   )        
-       \ /     \ /             LITTLE LITTLE INTO THE MIDDLE
-     __.'._____.'__        -------------------------------------
-    |              |        "Veriyi ortaya karışık yaptım."
-    |  _ _ _ _ _   |       
-    | ( ) ( ) ( )  |        "Hani marjinal bizdik?"
-    |  _ _ _ _ _   |       
-    |______________|        (Tabak tabak veri geliyo abi masaya)
+                .---.
+          _/__~0_\_
+     .---'   .---.   '---.           KOMUTAN LOGAR...
+    / .---. /_____\ .---. \         ----------------------------------
+   | |   |  | ^ ^ |  |   | |         "Şifreli bir cisim yaklaşıyor!"
+   | |   |  |  o  |  |   | |         
+   | '---'  '-----'  '---' |         "Bu bir uçak mı? Hayır..."
+    \                     /          "Bu bir kuş mu? Hayır..."
+     \                   /           "Bu bir EXIT NODE!"
+      \                 /
+       '---------------'             (G.O.R.A - Onion Defense System)
+           \       /
+            \     / 
+             '---'
 `
-
 const banner2 = `
-      .---.        .___________
-     /     \  __  /    ------
-    / /     \(..)/    -----
-   //////   ' \/ '   ---
-  //// / // :    : ---
- // /   /  / '  '
-//          //..\\
-=============UU==UU=======================================================
-                             G A L I L E O F F   W E B   K A Z I Y I C I
-==========================================================================
+    _______________________
+   /                       \
+  |   W A N T E D          |
+  |                        |          AZİZİM, BURASI VAHŞİ AĞ...
+  |      _.-------._       |         ----------------------------
+  |    .'    ___    '.     |          "- Senin o statik IP..."
+  |   /     (o_o)     \    |          "- Kanun tanımaz!"
+  |  |       (_)       |   |          "- Ama burada şerif benim."
+  |   \     __|__     /    |          
+  |    '.___|___|___.'     |          (Ödül: 1000 Onion Coin)
+  |          | |           |
+  |__________| |___________|
 `
-
 const banner3 = `
- ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄     ▄▄▄ ▄▄▄     ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ 
-█       █       █   █   █   █   █   █       █       █       █       █
-█   ▄▄▄▄█   ▄   █   █   █   █   █   █    ▄▄▄█   ▄   █    ▄▄▄█    ▄▄▄█
-█  █  ▄▄█  █▄█  █   █   █   █   █   █   █▄▄▄█  █ █  █   █▄▄▄█   █▄▄▄ 
-█  █ █  █       █   █▄▄▄█   █   █▄▄▄█    ▄▄▄█  █▄█  █    ▄▄▄█    ▄▄▄█
-█  █▄▄█ █   ▄   █       █   █       █   █▄▄▄█       █   █   █   █    
-█▄▄▄▄▄▄▄█▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄█   █▄▄▄█    
-             >> SİSTEM KEŞİF ve İSTİHBARAT ARACI <<
+             /^\
+            /   \
+           /_____\
+          |       |                  BİZ HACKER DEĞİLİZ!
+        __|_______|__               --------------------
+       /             \               "Bak şu an veritabanı boş..."
+      (  _  .---.  _  )              "Hokus Pokus!"
+       \  \|( . )|/  /               "Şimdi dolu!"
+        \  |  |  |  /
+         \ '-----' /                 (Sihirbazlık değil, Scraping)
+          '-------'
 `
-
 const banner4 = `
-      _______________________
-     /                      /|  
-    /   H A K L A R I M    / |  
-   /________VAR!__________/  |    "Anayasa diyor ki her site kazınabilir!"
-  |  ___   ___   ___   ___|  |                        - galileoff Goodman
-  | |   | |   | |   | |   |  |
-  | |___| |___| |___| |___|  |    "Başı dertte bir veri tabanı mı?"
-  |_______________________| /   
-                           /       Better Call galileoff!
+       .-------.
+      /   Rx    \
+     /___________\                   USER-AGENT YETMEZ...
+    |             |                 ---------------------
+    |  __________ |                  "Bunun <head>'i ağrıyor,"
+    | |  ______  ||                  "<body>'sinde sızı var."
+    | | | (o)  | ||
+    | | |______| ||                  "Sana bi Tor devresi yazıyorum,"
+    | |__________| |                  "Günde 3 kere IP değiştireceksin."
+    |_____________|
 `
-
 const banner5 = `
-      .-------.
-     /   _ _   \       LOS DATOS HERMANOS
-    |   (o_o)   |    -----------------------
-    |    (_)    |    "Tavuklarımız lezzetli,
-    |   __|__   |     verilerimiz taze."
-   /   /  |  \   \   
-  /   /   |   \   \  (Gustavo Fring Onaylı)
- |    |---|---|    |
-      |   |   |      "Biz sadece tavuk satmıyoruz..."
-`
-
-const banner6 = `
-     _____
-    |     |
-    |_____|                        MASUMİYET ÇOCUKLUK MU Kİ?
-   /       \         ------------------------------------------------------
-  /_________\        "Bir ortalık insanı yüzünden demedim..."
-                     "Bir veri yüzünden, dönüp dolaşıp aynı porta geldik."         
-`
-
-const banner7 = `
- ██████╗  █████╗ ██╗     ██╗██╗     ███████╗ ██████╗ ███████╗███████╗
-██╔════╝ ██╔══██╗██║     ██║██║     ██╔════╝██╔═══██╗██╔════╝██╔════╝
-██║  ███╗███████║██║     ██║██║     █████╗  ██║   ██║█████╗  █████╗  
-██║   ██║██╔══██║██║     ██║██║     ██╔══╝  ██║   ██║██╔══╝  ██╔══╝  
-╚██████╔╝██║  ██║███████╗██║███████╗███████╗╚██████╔╝██║     ██║     
- ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝     
-                       - SİBER İSTİHBARAT -
-`
-
-const banner8 = `
-   _____      _ _ _             __  __ 
-  / ____|    | (_) |           / _|/ _|
- | |  __  __ | |_| | ___   ___| |_| |_ 
- | | |_ |/ _|| | | |/ _ \ / _ \  _|  _|
- | |__| | (_ | | | |  __/| (_) | | | |  
- \_____|\__,_|_|_|_|\___| \___/|_| |_|  
-                                       
-         --[ WEB KAZIYICI ]--
-`
-
-const banner9 = `
-       .
-     , O ,        ---------------------------------------
-  , '  |  ' ,     "Azizim, burası Vahşi Batı..."  
-  | -- * -- |     "Burada robots.txt sökmez!"   
-  ' ,  |  , '     "Bana bunu yapma Jerry, verileri ver!"
-     ' O '        
-       '          (Şerif Yıldızı Veri İçin Parlıyor)
-`
-
-const banner10 = `
-         ___
-        /   \                                    SÖYLESENE!!
-       /_____\         --------------------------------------
-      (   _   )        "Sen 18'de ne yapıyordun?"
-       \_____/         "19'da ne yapıyordun? 20'de?"
-          |
-         _|_           "Ben o portlarda scraping yapıyordum!"
-        (___)          "Anladın mı? Scraping!"
-`
-
-const banner11 = `
-      |\__/,|   ('"` + "`" + `\                 G A L I L E O F F
-     _.|o o  |_   ) )           ----------------------------------
-   -(((---(((--------            "Tırmalamadık site bırakma Firuş."
- `
-
-const banner12 = `
-         ( (            SAKİN OL
-          ) )              VE
-        ........     KAZIMAYA BAŞLA
-        |      |]    - GALILEOFF -
-        \      /    
-         '----'      
-`
-
-const banner13 = `
       __
-    _|__|_                                  YERALTI?
-   (_o__o_)           ------------------------------
-  (   <    )          "Allah belamı versin ki,
-   \______/            hiçbir veriyi sevmiyorum..."
-      |
-     _|_              "Ama mecburum..."
-    |   |
+     /  \      ___       vVv
+    | oo |    (o o)     (O O)         VALLA GOL OLUR!
+    |__u_|    ( v )     ( w )        -----------------
+    /|  |\    /| |\     /| |\         "Bak bu portu görüyor musun?"
+   / |  | \  / | | \   / | | \        "Bu port boşuna açık değil."
+     /  \      / \       / \          "Ben o veriye golümü atarım!"
+    /____\    /___\     /___\
 `
-
-const banner14 = `
-       .           		               G A L I L E O F F
-      ":"          		 --------------------------------
-    ___:____     |"\/"|
-  ,'        '.    \  /      "Vurgun yeme, veri ye..."
-  |  O        \___/  |
-~^~^~^~^~^~^~^~^~^~^~^~^~
- `
-
-const banner15 = `
-          _
-        _( )_
-       |     |                            HOKKAĞBAZ MI OYNUYO BURDA
-       |_____|           -------------------------------------------
-         | |             "Biz hacker değiliz İskender abi..."
-       ( ) ( )
-      (       )          "Biz scraperız! El çabukluğu marifet."
-       \     /
-        |   |            "Yoksa veri orada duruyor, almamak ayıp."
+const banner6 = `
+     .-------------------.
+    /| .---------------. |\
+   | | |T O R   A G I| | |          PEKİ NSA DE BİZİ GÖRECEK Mİ?
+   | | |_______________| | |        -----------------------------
+   | | _________________ | |         "- Şifreli bu evladım..."
+   | |/___(o)_____(o)___\| |         "- Tünel kazıyoruz tünel!"
+   |_______________________|         "- Müren Bey görmez ama..."
+   /_______________________\         "- Biz her şeyi görürüz."
+  /_________________________\
 `
-
-const banner16 = `
-   ___________________________________________________________
-  |                                                           |
-  |  "SİZİN DE HAKLARINIZ VAR! ANAYASA DİYOR Kİ VAR!"         |
-  |  "BEN İNANIYORUM Kİ AKSİ İSPATLANANA KADAR..."            |
-  |  HER VERİ MASUMDUR!                                       |
-  |___________________________________________________________|
-           \
-            \     ( ͡° ͜ʖ ͡°)
-                 <|     |>  
-                  |     |
-`
-
-const banner17 = `
-       _______
-      /      //      
-     /______//         -------------------------------------------
-    (______(/          "Bizim barı açıyoruz Altan..."
-    /      \
-   /  ____  \          "Bilemiyorum Altan..."
-  |  (    )  |
-   \  \__/  /          "Verileri çekince bir rahatlama geliyor."
-    \______/           "En azından HTML temiz Altan."
-`
-
-const banner18 = `
-    ______
-   |      |
-   |      | .                            KAPI AÇIK.
-   |      |/          ------------------------------
-   |      /           "Herkesin bir masumiyeti,
-   |     |             herkesin bir verisi vardır."
-   |_____|
-`
-
-const banner19 = `
-  _______________________
- /                       \
-|     BU ABİ BİRİ Mİ?     |
-| GALILEOFF KİM Kİ ZATEN. |
- \_______________________/
-          \
-           \   (o)__(o)
-              (   ..   )
-              (  ____  )
-              (_______)
-`
-
-const banner20 = `
-        _.---._
-      .'       '.        
-     /           \       -----------------------------------------
-    |   O  O  O   |      "Komutan Logar, bir cisim yaklaşıyor..."
-     \___________/       "- Veriymiş, veri!"
-        / / \ \          
-       /_/   \_\         "Seni seçtim çünkü sen farklısın,
-                         Japon yapıştırıcısı gibisin."
-`
-
-const banner21 = `
-      .-""""""-.
-    .'          '.        
-   /   O      O   \       --------------------------------------------
-  :           '    :      "Sen hata mı gördün?.."
-  |                |      
-  :    .------.    :      "Kodu çalıştırırken hata mı gördün?"
-   \  '        '  /       
-    '.          .'        "Hayır yani, hata varsa söyle düzeltelim."
-      '-......-'
-`
-
-const banner22 = `
-      _________
-     |   BAR   |                     mukadderat diyelim.
-   __|_________|__       --------------------------------
-  |               |      "Barı açıyorum..."
-  |  ( )     ( )  |      
-  |   |       |   |      "Ayla'yla aramı düzeltiyorum."
-  |  _|_     _|_  |      
-  |_______________|      "Babamı da yanıma alıyorum!"
-                         
-`
-
-const banner23 = `
-      ,----------.
-     /  _      _  \          
-    |  (o)    (x)  |         -------------------------
-    |   \____/     |         "Ben kodunu beğenmezsem,
-    |    |__|      |          bu uzman görüşü olur."
-   /     /  \       \        
-  |     /    \       |       "Sen beğenmezsen..."
- /     /      \       \      "Çekememezlik olur!"
-`
-
-const banner24 = `
+const banner7 = `
          .---.
-        /     \                     Bekir'in de Kaderi Uğursuzdu
-       | (o) (o)         ---------------------------------------
-       |    |            "Bak site..."
-      /|   ___           "Ben bu scraping'i bırakırım dedim,"
-     / |  \___/          "Bırakamadım..."
-    /  |_______|         "İmkansız olduğunu bile bile... 
-      /   |  | \          403 yiyeceğimi bile bile..."
+        /  ^  \
+       /  / \  \                    ROBOT DEĞİLİM BEN!
+      /  /   \  \                  --------------------
+     /   '---'   \                  "Senin o 'Captcha' dediğin..."
+    |    (o_o)    |                 "Benim için çerez parası."
+     \    (_)    /
+      \  __|__  /                   "Kurtar beni 403'ten!"
+       \_______/
 `
-
-const banner25 = `
+const banner8 = `
+        _________
+       / _______ \
+      / /       \ \                 LİSANSLI MI BU ABİ?
+     | |   DVD   | |               --------------------
+     | |  [TOR]  | |                "- Orjinal veri abicim."
+     | |         | |                "- Sinemada çekim değil,"
+      \ \_______/ /                 "- Direk serverdan çekim!"
+       \_________/
+`
+const banner9 = `
+          _  _
+        (  )(  )
+      (  (TOR)   )                  VERİ NERDE?
+     (____________)                --------------
+           //                       "- Bulutta."
+          //                        "- Bulut nerde?"
+       _ //_                        "- Yağmur oldu, aktı..."
+      ( o_o )                       "- E veri?"
+       (___)                        "- Islandı abicim."
+`
+const banner10 = `
+      /¯¯¯¯¯¯¯¯¯\ 
+     |   [REC]   |                  TAMAM CANIM, IŞIK VERİN!
+     |   .---.   |                 ------------------------
+     |  / ( ) \  |                  "Çekiyorum veriyi..."
+     | |   |   | |                  "Çek, çek, çek..."
+     |  \ (_) /  |                  "Hah, tam <meta> etiketinden al!"
+     |   '---'   |
+      \_________/
+`
+const banner11 = `
+       .------.
+      | |¯¯|¯| |                    KARIŞIK YAPTIM
+      | |__| | |                   ---------------
+      | .--. | |                    "Onion linkleri..."
+      | |OO| | |                    "Proxy zincirleri..."
+      | '==' | |                    "Ortaya karışık yaptım."
+       '------'
+`
+const banner12 = `
+         _
+        {_}
+        | |                         BU NEYMİŞ LEMİ?
+        | |                        ------------------
+      .-| |-.                       "- Onion Elixir efendim."
+     /  | |  \                      "- İçince ne oluyor?"
+    |   TOR   |                     "- IP'niz kayboluyor."
+    |         |                     "- Sevdim bunu."
+     \_______/
+`
+const banner13 = `
        .---.
-      /  _  \          
-     |  (o)  |         ---------------------------
-     |   |   |         "Nereye gidiyorsun Bekir?"
-    /   -^-   \        
-   /     |     \       "- Verinin gittiği yere."
-  /      |      \      
+      ([o_o])                       İNSANIM BEN İNSAN!
+      /|___|\                      --------------------
+     //| H |\\                      "Bana ff. deme..."
+       |___|                        "Bana 404 de!"
+      /|   |\                       "Bana 502 de!"
+     /_|   |_\
 `
-
-const banner26 = `
-      ________________
-     | |__|__|__|__|__|      
-     |  _      _      |      ----------------------------------------
-     | |o|    |o|     |      "Dönüp dolaşıp aynı siteye geliyorsun."
-     |_|_|____|_|_____|      
-      (o)         (o)        "Kaderin bu senin Bekir,
-                             bu HTML'i parse etmek..."
+const banner14 = `
+     .           .
+      \  .-.  /                     
+     .- ( o ) -.                   ------------------------
+      /  '-'  \                     "- Ateşi buldum!"
+     '    |    '                    "- Bırak ateşi..."
+          |                         "- Veriyi buldun mu?"
+       .--^--.                      "- Veri taşa yazılı şefim."
+      /_______\
+`
+const banner15 = `
+       (  ) 
+        )(                          DOKUNMA O PORTA!
+       (__)                        -------------------
+      (____)                        "Yanarsın..."
+     (______)                       "IP ban yersin..."
+    (________)                      "Biz burda sanat yapıyoruz!"
+     \ .--. /
+      \|o |/
+       |__|
 `

@@ -221,7 +221,7 @@ func PrintMenu(items []string) int {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf(" %sNörüyoz >%s ", ColorCyan, ColorReset)
+		fmt.Printf(" %sBirini Seç Canım >%s ", ColorCyan, ColorReset)
 		scanner.Scan()
 		input := strings.TrimSpace(scanner.Text())
 
@@ -274,7 +274,7 @@ func AskForNewScan() bool {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf(" %sNörüyoz >%s ", ColorCyan, ColorReset)
+		fmt.Printf(" %sBirini Seç Canım >%s ", ColorCyan, ColorReset)
 		scanner.Scan()
 		input := strings.TrimSpace(scanner.Text())
 
@@ -458,7 +458,7 @@ func GetWorkerCount() int {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		TypePrint(" %sNörüyoz >%s ", ColorCyan, ColorReset)
+		TypePrint(" %sBirini Seç Canım >%s ", ColorCyan, ColorReset)
 		scanner.Scan()
 		input := strings.TrimSpace(scanner.Text())
 

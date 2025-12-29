@@ -179,7 +179,7 @@ categories:
   # ------------------------------------------------------------------
   - id: "mixer"
     name: "Kripto Karıştırıcı (Mixer)"
-    tag: "[MİKSER]"
+    tag: "[MİXER]"
     color: "yellow"
     keywords:
       high:
@@ -230,7 +230,7 @@ categories:
 
   - id: "hacking"
     name: "Hacking / Exploit Araçları"
-    tag: "[HACKING]"
+    tag: "[HACK TOOL]"
     color: "red"
     priority: 70
     keywords:

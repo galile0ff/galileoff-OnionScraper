@@ -193,7 +193,7 @@ func selectUserAgentFile() string {
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		ui.TypePrint(" %sNörüyoz >%s ", ui.ColorCyan, ui.ColorReset)
+		ui.TypePrint(" %sBirini Seç Canım >%s ", ui.ColorCyan, ui.ColorReset)
 		text, _ := reader.ReadString('\n')
 		text = strings.TrimSpace(text)
 
